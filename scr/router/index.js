@@ -1,8 +1,8 @@
-import { Router } from "express";
-import router from "./todoRouters";
- 
-const router = Router()
+const {Router} = require("express")
+const userRouter = require("./userRouter")
+const taskRouter = require("./todoRouters")
+const router = Router();
+router.use("/auth",userRouter)
+router.use("/todo",taskRouter)
 
-router.use("/task",router);
-
-export default router
+module.exports = router;

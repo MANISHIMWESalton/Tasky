@@ -1,22 +1,23 @@
-import Todo from "../../../model/todoModel";
-
-const createTask = async(body)=>{
+const Todo =  require ("../../../model/todoModel");
+    
+const  createTask = async(body)=>{
     return await Todo.create(body)
 }
-const getTask = async(id)=>{
+const  getTask = async(id)=>{
     return await Todo.findById(id)
 }
-const getTasks = async()=>{
+const  getTasks = async()=>{
 return await Todo.find()
 }
-const updateTask = async(body,id)=>{
-return await Todo.findByIdAndUpdate(body,id)
+const  updateTask = async(body)=>{
+  
+return await Todo.findByIdAndUpdate(body)
 }
-const deleteTask = async(id)=>{
+const  deleteTask = async(id)=>{
     return await Todo.findByIdAndDelete(id)
 }
 
-export default{
+module.exports = {
     createTask,
     getTasks,
     getTask,

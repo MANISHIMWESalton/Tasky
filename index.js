@@ -1,23 +1,17 @@
-import express from "express";
-import mongoose from "mongoose";
-import router from "./scr/router/index.js";
+const express =  require ("express");
+const dbconnection =  require ("./scr/db/connectDB");
+require ("dotenv").config()
 
-const app =  express();
-const PORT = 8000;
+const router = require("./scr/router/index")
+const  app =  express();
+
+const  PORT = 5000;
 app.use(express.json())
-
 app.use("/api",router)
 
-
-mongoose.connect(``).then(()=>{
-    console.log(`server is connected to database`);
-  
-}).catch((error)=>{
-console.log(`Failed to connect to database`);
-})
-
-app.listen(PORT,()=>{
+app.listen(PORT,async()=>{
+await dbconnection()
     console.log(`server is running on port: http://locahost${PORT}`);
     })
 
-export default app 
+module.exports = app 

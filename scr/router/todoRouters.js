@@ -1,10 +1,12 @@
-import { Router } from "express";
-import todoControllers from "../modules/todo/controller/todoControllers";
+const {Router} = require("express")
+const todoControlleries = require("../modules/todo/controller/todoControllers")
 
 const router = Router();
-router.post("/create",todoControllers)
-router.get("/get",todoControllers)
-router.put("/update:id",todoControllers)
-router.get("/get:id",todoControllers)
-router.delete("/delete:id",todoControllers)
-export default router
+router.post("/task",todoControlleries.createTask)
+router.get("/tasks",todoControlleries.getTasks)
+router.get("/task/:id",todoControlleries.getTask)
+router.put("/task/:id",todoControlleries.updateTask)
+router.delete("/task/:id",todoControlleries.deleteTask)
+
+
+module.exports = router;
