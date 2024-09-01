@@ -3,10 +3,7 @@ const jwt = require("jsonwebtoken")
 const brcrypt = require("bcrypt")
 
 
-const maxAge = 4 * 24 * 60 * 60;
-const createToken = (id) => {
-    return jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: maxAge })
-}
+
 const register = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -23,16 +20,28 @@ const register = async (req, res) => {
     }
 }
 
+const maxAge = 3 * 24 * 60 * 60;
+const createToken = (id) => {
+    return jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: maxAge })
+}
 
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
-        const user = await User.create({ email, password })
-        const token = createToken(user._id);
-        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+        const user = await User.findOne({ email })
+        if (user) {
+            const correctPassword = await brcrypt.compare(password, user.password)
+            if (!correctPassword) {
+                return res.json({ message: "Please provide valid password" })
+            }
+            const token = createToken(user._id);
+            res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+            res.status(201).json({ message: "User loged in ", data: { user: user._id, token } })
+        } else {
+            res.json({ message: "user not found" })
+        }
 
 
-        res.status(201).json({ message: "User loged in ", data: { user: user._id, token } })
     } catch (error) {
         res.status(500).json({ message: error.message })
     }
