@@ -11,6 +11,7 @@ const register = async (req, res) => {
             throw new Error("Email & Password required")
         }
         const isUserExists = await User.findOne({ email });
+
         if (isUserExists) res.json({ message: "User is arleady exists" })
 
         const newUser = await User.create({ email, password });
@@ -29,19 +30,17 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email })
-        if (user) {
-            const correctPassword = await brcrypt.compare(password, user.password)
-            if (!correctPassword) {
-                return res.json({ message: "Please provide valid password" })
-            }
-            const token = createToken(user._id);
-            res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
-            res.status(201).json({ message: "User loged in ", data: { user: user._id, token } })
-        } else {
-            res.json({ message: "user not found" })
+
+        if (!user) {
+            return res.status(401).json({ message: "user not found" })
         }
-
-
+        const correctPassword = await brcrypt.compare(password, user.password);
+        if (!correctPassword) {
+            return res.status(401).json({ message: "Please provide a valid credentials" })
+        }
+        const token = createToken(user._id);
+        res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
+        res.status(201).json({ message: "User loged in ", data: { user: user._id, token } })
     } catch (error) {
         res.status(500).json({ message: error.message })
     }

@@ -9,14 +9,12 @@ const authMiddleware = async (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.SECRET_KEY);
         req.user = decoded;
-
-        const user = await User.findById(decoded._id).select('-password');
+        const user = await User.findById(decoded.id);
         if (!user) {
             return res.status(401).json({ message: "User not found." });
         }
-
         req.user = user;
         next();
     } catch (error) {
